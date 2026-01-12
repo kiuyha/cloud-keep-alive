@@ -1,0 +1,34 @@
+name: Cloud Keep Alive
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+
+jobs:
+  sustain:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: pip install requests beautifulsoup4 huggingface_hub
+
+      - name: Wake Hugging Face Spaces
+        env:
+          HF_USERNAME: ${{ secrets.HF_USERNAME }}
+        run: python scripts/hf.py
+
+      - name: Extend PythonAnywhere Apps
+        if: github.event_name == 'workflow_dispatch' || (github.event.schedule == '0 0 1 * *')
+        env:
+          PA_USERNAME: ${{ secrets.PA_USERNAME }}
+          PA_PASSWORD: ${{ secrets.PA_PASSWORD }}
+        run: python scripts/pa.py
