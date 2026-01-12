@@ -19,16 +19,16 @@ jobs:
           python-version: '3.9'
 
       - name: Install Dependencies
-        run: pip install requests beautifulsoup4 huggingface_hub
+        run: uv sync
 
       - name: Wake Hugging Face Spaces
         env:
           HF_USERNAME: ${{ secrets.HF_USERNAME }}
-        run: python scripts/hf.py
+        run: uv run hf.py
 
       - name: Extend PythonAnywhere Apps
         if: github.event_name == 'workflow_dispatch' || (github.event.schedule == '0 0 1 * *')
         env:
           PA_USERNAME: ${{ secrets.PA_USERNAME }}
           PA_PASSWORD: ${{ secrets.PA_PASSWORD }}
-        run: python scripts/pa.py
+        run: uv run pa.py
