@@ -33,6 +33,10 @@ jobs:
 
       - name: Extend PythonAnywhere Apps
         if: github.event_name == 'workflow_dispatch' || (github.event.schedule == '0 0 1 * *')
+        env:
+          PA_USERNAME: ${{ secrets.PA_USERNAME }}
+          PA_PASSWORD: ${{ secrets.PA_PASSWORD }}
+        run: uv run pa.py
         
   workflow-keepalive:
     if: github.event_name == 'schedule'
@@ -41,7 +45,3 @@ jobs:
       actions: write
     steps:
       - uses: liskin/gh-workflow-keepalive@v1
-        env:
-          PA_USERNAME: ${{ secrets.PA_USERNAME }}
-          PA_PASSWORD: ${{ secrets.PA_PASSWORD }}
-        run: uv run pa.py
